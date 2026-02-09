@@ -3,17 +3,11 @@ name: uploader
 on:
   push:
     branches: [ main, master ]
-    paths:
-      - 'src/**'
-      - 'Cargo.toml'
-      - 'Cargo.lock'
-      - 'Dockerfile'
-      - '.github/workflows/uploader.yml'
+    tags: [ 'v*.*.*' ]
   workflow_dispatch:
 
 env:
   REGISTRY: ghcr.io
-  # Ini akan menjadi ghcr.io/username/repository
   IMAGE_NAME: ${{ github.repository }}
 
 jobs:
@@ -22,7 +16,6 @@ jobs:
     permissions:
       contents: read
       packages: write
-      id-token: write
 
     steps:
       - name: Checkout repository
@@ -47,21 +40,19 @@ jobs:
         with:
           images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
           tags: |
-            type=raw,value=latest
-            type=sha,format=short
+            type=semver,pattern={{version}}
+            type=semver,pattern={{major}}.{{minor}}
+            type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' }}
 
       - name: Build and push Docker image
-        id: push
         uses: docker/build-push-action@v5
         with:
           context: .
           file: ./Dockerfile
-          # Mendukung arsitektur PC (amd64) dan Raspberry Pi/Server ARM (arm64)
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: |
-            ${{ env.REGISTRY }}/${{ github.actor }}/uploader:latest
-            ${{ env.REGISTRY }}/${{ github.actor }}/uploader:${{ github.sha }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=gha,scope=uploader
           cache-to: type=gha,mode=max,scope=uploader
           provenance: false
