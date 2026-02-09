@@ -2,7 +2,7 @@
 
 # 🚀 Sptzx Uploader
 
-[![Build Status](https://github.com/siputzx/uploader/actions/workflows/uploader.yml/badge.svg)](https://github.com/siputzx/uploader/actions)
+[![Build Status](https://github.com/siputzx/uploader/actions/workflows/main.yml/badge.svg)](https://github.com/siputzx/uploader/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Rust](https://img.shields.io/badge/rust-%23000000.svg?style=flat&logo=rust&logoColor=white)](https://www.rust-lang.org/)
 
